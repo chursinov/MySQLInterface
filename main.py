@@ -186,9 +186,27 @@ def on_add_row():
             connection.commit()
         print("Succesful insert")
     def on_insert_request_emergency():
-        pass
+        FlightID = ui_Takeoff.FlightID.toPlainText()
+        PersonnelID = ui_Takeoff.PersonnelID.toPlainText()
+        RequestID = ui_Takeoff.RequestID.toPlainText()
+        WaitingTime = ui_Takeoff.WaitingTime.toPlainText()
+        EmergencyStatusID = ui_Takeoff.EmergencyStatuID.toPlainText()
+        with connection.cursor() as cursor:
+            insert_request_emergency_query = f"INSERT into `requsetforemergencysliquidation` (FlightID, PersonnelID, RequestID, WaitingTime, EmergencyStatusID) values ({FlightID}, {PersonnelID}, {RequestID}, '{WaitingTime}', {EmergencyStatusID})"
+            cursor.execute(insert_request_emergency_query)
+            connection.commit()
+        print("Succesful insert")
     def on_insert_takoff_request():
-        pass
+        RequestID = ui_landing.RequestID.toPlainText()
+        FlightID = ui_landing.FlightID.toPlainText()
+        PersonnelID = ui_landing.PersonnelID.toPlainText()
+        WaitingTime = ui_landing.WaitingTime.toPlainText()
+        StatusID = ui_landing.StatusID.toPlainText()
+        with connection.cursor() as cursor:
+            insert_takeoff_landing_request = f"INSERT into `takeoff_landing_request` (RequestID, FlightID, PersonnelID, WaitingTime, StatusID) values ({RequestID}, {FlightID}, {PersonnelID}, '{WaitingTime}', {StatusID})"
+            cursor.execute(insert_takeoff_landing_request)
+            connection.commit()
+        print("Succesful insert")
     if form.radioButton_2.isChecked():
         DialogDepartmentInsert = QtWidgets.QDialog()
         ui = DialogDepartment.Ui_DialogDepartmentInsert()
@@ -226,14 +244,16 @@ def on_add_row():
         DialogRequestStatusInsert.exec_()
     if form.requsetforemergLiqBut.isChecked():
         DialogEmergencyInsert = QtWidgets.QDialog()
-        ui = Ui_DialogEmergencyInsert()
-        ui.setupUi(DialogEmergencyInsert)
+        ui_Takeoff = Ui_DialogEmergencyInsert()
+        ui_Takeoff.setupUi(DialogEmergencyInsert)
+        ui_Takeoff.requsetforemergencysliquidationButton.clicked.connect(on_insert_request_emergency)
         DialogEmergencyInsert.show()
         DialogEmergencyInsert.exec_()
     if form.radioButton_6.isChecked():
         TakeoffDialog = QtWidgets.QDialog()
-        ui = Ui_TakeoffDialog()
-        ui.setupUi(TakeoffDialog)
+        ui_landing = Ui_TakeoffDialog()
+        ui_landing.setupUi(TakeoffDialog)
+        ui_landing.takeoffButton.clicked.connect(on_insert_takoff_request)
         TakeoffDialog.show()
         TakeoffDialog.exec_()
 
