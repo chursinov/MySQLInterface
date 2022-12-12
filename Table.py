@@ -15,6 +15,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
+        MainWindow.setAnimated(False)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.radioButton = QtWidgets.QRadioButton(self.centralwidget)
@@ -39,7 +40,7 @@ class Ui_MainWindow(object):
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(30, 150, 93, 28))
+        self.pushButton.setGeometry(QtCore.QRect(30, 210, 93, 28))
         self.pushButton.setObjectName("pushButton")
         self.tableWidget = QtWidgets.QTableWidget(self.centralwidget)
         self.tableWidget.setGeometry(QtCore.QRect(180, 130, 591, 351))
@@ -59,6 +60,13 @@ class Ui_MainWindow(object):
         self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_4.setGeometry(QtCore.QRect(430, 500, 93, 28))
         self.pushButton_4.setObjectName("pushButton_4")
+        self.requsetforemergLiqBut = QtWidgets.QRadioButton(self.centralwidget)
+        self.requsetforemergLiqBut.setGeometry(QtCore.QRect(20, 140, 121, 21))
+        self.requsetforemergLiqBut.setAcceptDrops(True)
+        self.requsetforemergLiqBut.setObjectName("requsetforemergLiqBut")
+        self.radioButton_6 = QtWidgets.QRadioButton(self.centralwidget)
+        self.radioButton_6.setGeometry(QtCore.QRect(20, 160, 151, 17))
+        self.radioButton_6.setObjectName("radioButton_6")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 26))
@@ -84,6 +92,8 @@ class Ui_MainWindow(object):
         self.pushButton_2.setText(_translate("MainWindow", "Add Row"))
         self.pushButton_3.setText(_translate("MainWindow", "Update"))
         self.pushButton_4.setText(_translate("MainWindow", "Delete row"))
+        self.requsetforemergLiqBut.setText(_translate("MainWindow", "requsetforemergencysliquidation"))
+        self.radioButton_6.setText(_translate("MainWindow", "takeoff_landing_request"))
 
 
 if __name__ == "__main__":

@@ -5,15 +5,17 @@ from config import host, user, password, db_name
 from PyQt5.QtWidgets import QApplication, QTableWidget, QTableWidgetItem
 from PyQt5 import uic
 from PyQt5 import QtWidgets
-import DialogDepartment
+
 from DeleteDialog import Ui_DeleteDialog
 from DialogAircraftInsert import Ui_DialogAircraftInsert
 
-from DialogDepartment import Ui_DialogDeparmentInsert
+import DialogDepartment
 from DialogEmergencyStatusInsert import Ui_DialogEmergencyStatusInsert
 from EmployeeInsert import Ui_DialogEmployeeInsert
+from TakeoffInsertDialog import Ui_TakeoffDialog
 from UpdateDialog import Ui_Dialog
 from request_statusInsert import Ui_DialogRequestStatusInsert
+from requsetforemergencysliquidationInsert import Ui_DialogEmergencyInsert
 
 try:
     connection = pymysql.connect(
@@ -123,7 +125,16 @@ def on_click():
         table_name = "request_status"
         horizontalHeaderLabels = ["StatusID", "StatusName", "Description"]
         form.label.setText("Table: request_status")
+    if form.requsetforemergLiqBut.isChecked():
+        table_name = "requsetforemergencysliquidation"
+        horizontalHeaderLabels = ["FlightID", "PersonnelID", "RequestID", "WaitingTime", "EmergencyStatusID"]
+        form.label.setText("Table: requsetforemergencysliquidation")
+    if form.radioButton_6.isChecked():
+        table_name = "takeoff_landing_request"
+        horizontalHeaderLabels = ["RequestID", "FlightID", "PersonnelID", "WaitingTime", "StatusID"]
+        form.label.setText("Table: takeoff_landing_request")
     loaddata(table_name, horizontalHeaderLabels)
+
 
 
 def on_add_row():
@@ -174,13 +185,17 @@ def on_add_row():
             cursor.execute(add_row_employee_query)
             connection.commit()
         print("Succesful insert")
+    def on_insert_request_emergency():
+        pass
+    def on_insert_takoff_request():
+        pass
     if form.radioButton_2.isChecked():
-        Dialog = QtWidgets.QDialog()
-        ui = Ui_Dialog()
-        ui.setupUi(Dialog)
+        DialogDepartmentInsert = QtWidgets.QDialog()
+        ui = DialogDepartment.Ui_DialogDepartmentInsert()
+        ui.setupUi(DialogDepartmentInsert)
         ui.pushButton.clicked.connect(on_insert_department)
-        Dialog.show()
-        Dialog.exec_()
+        DialogDepartmentInsert.show()
+        DialogDepartmentInsert.exec_()
     if form.radioButton.isChecked():
         DialogAircraftInsert = QtWidgets.QDialog()
         ui = Ui_DialogAircraftInsert()
@@ -209,6 +224,18 @@ def on_add_row():
         ui.pushButton.clicked.connect(on_insert_request_status)
         DialogRequestStatusInsert.show()
         DialogRequestStatusInsert.exec_()
+    if form.requsetforemergLiqBut.isChecked():
+        DialogEmergencyInsert = QtWidgets.QDialog()
+        ui = Ui_DialogEmergencyInsert()
+        ui.setupUi(DialogEmergencyInsert)
+        DialogEmergencyInsert.show()
+        DialogEmergencyInsert.exec_()
+    if form.radioButton_6.isChecked():
+        TakeoffDialog = QtWidgets.QDialog()
+        ui = Ui_TakeoffDialog()
+        ui.setupUi(TakeoffDialog)
+        TakeoffDialog.show()
+        TakeoffDialog.exec_()
 
 
 
@@ -255,6 +282,10 @@ def on_delete():
             table = "employee"
         if form.radioButton_5.isChecked():
             table = "request_status"
+        if form.requsetforemergLiqBut.isChecked():
+            table = "requsetforemergencysliquidation"
+        if form.radioButton_6.isChecked():
+            table = "takeoff_landing_request"
         PrimaryKey = ui.PrimaryKey.toPlainText()
         PrimaryKeyValue = ui.PrimaryKeyValue.toPlainText()
         with connection.cursor() as cursor:
