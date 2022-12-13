@@ -20,6 +20,7 @@ from FindInReqEmerg import Ui_FindInRequestEmergDialog
 from FindInStatus import Ui_FindStatusDialog
 from FindInTakeoff import Ui_FindTakeoffDialog
 from TakeoffInsertDialog import Ui_TakeoffDialog
+from TriggerExecutionDialog import Ui_TriggerDialog
 from UpdateDialog import Ui_Dialog
 from request_statusInsert import Ui_DialogRequestStatusInsert
 from requsetforemergencysliquidationInsert import Ui_DialogEmergencyInsert
@@ -273,6 +274,8 @@ def on_add_row():
 
 def on_update():
     def update_cell():
+        def trigger_exit():
+            TriggerDialog.close()
         if form.radioButton.isChecked():
             table = "aircraft"
         if form.radioButton_2.isChecked():
@@ -291,11 +294,27 @@ def on_update():
         newValue = ui.newValue.toPlainText()
         primaryKey = ui.PrimaryKey.toPlainText()
         PrimaryKeyValue = ui.PrimaryKeyValue.toPlainText()
+
         with connection.cursor() as cursor:
             update_query = f"UPDATE `{table}` SET {column}='{newValue}' WHERE {primaryKey}='{PrimaryKeyValue}'"
             cursor.execute(update_query)
             connection.commit()
         loaddata(table_name, horizontalHeaderLabels)
+        with connection.cursor() as cursor:
+            trigger_pop = "SELECT NotifyText From `notifications` WHERE NotifyID='1'"
+            cursor.execute(trigger_pop)
+            buf = cursor.fetchall()
+            if buf != "":
+                TriggerDialog = QtWidgets.QDialog()
+                Triggerui = Ui_TriggerDialog()
+                Triggerui.setupUi(TriggerDialog)
+                Triggerui.pushButton.clicked.connect(trigger_exit)
+                Triggerui.label.setText(buf[0].get('NotifyText'))
+                TriggerDialog.show()
+                TriggerDialog.exec_()
+            clear_table_query = "TRUNCATE `notifications`"
+            cursor.execute(clear_table_query)
+            connection.commit()
     UpdateDialog = QtWidgets.QDialog()
     ui = Ui_Dialog()
     ui.setupUi(UpdateDialog)
