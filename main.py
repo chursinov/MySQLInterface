@@ -13,6 +13,12 @@ import DialogDepartment
 from DialogEmergencyStatusInsert import Ui_DialogEmergencyStatusInsert
 from EmployeeInsert import Ui_DialogEmployeeInsert
 from FindInAirctaft import Ui_FindAircraftDialog
+from FindInDepartment import Ui_FindDepartmentDialog
+from FindInEmergency import Ui_FindEmergencyDialog
+from FindInEmployee import Ui_FindEmployeeDialog
+from FindInReqEmerg import Ui_FindInRequestEmergDialog
+from FindInStatus import Ui_FindStatusDialog
+from FindInTakeoff import Ui_FindTakeoffDialog
 from TakeoffInsertDialog import Ui_TakeoffDialog
 from UpdateDialog import Ui_Dialog
 from request_statusInsert import Ui_DialogRequestStatusInsert
@@ -340,6 +346,7 @@ def on_delete():
 def on_find():
     global table_name
     global horizontalHeaderLabels
+    global object
     def loaddata_for_find(table_name, horizontalHeaderLabels, object):
         count_columns_query = f"select count(*) from information_schema.columns where table_name = '{table_name}' and table_schema = 'airportd'"
         with connection.cursor() as cursor:
@@ -361,32 +368,110 @@ def on_find():
                 for i in range(count_columns[0].get('count(*)')):
                     object.tableWidget.setItem(table_row, i, QtWidgets.QTableWidgetItem(str(row.get(horizontalHeaderLabels[i]))))
                 table_row += 1
-        print("This is the end of select_all")
     def find_filter():
-        print("Test")
-    if form.radioButton.isChecked:
+        Column = object.comboBoxColumn.currentText()
+        Value = object.textEditValue.toPlainText()
+        print(table_name, horizontalHeaderLabels, Column, Value)
+        count_columns_query = f"select count(*) from information_schema.columns where table_name = '{table_name}' and table_schema = 'airportd'"
+        with connection.cursor() as cursor:
+            cursor.execute(count_columns_query)
+            count_columns = cursor.fetchall()
+        object.tableWidget.setColumnCount(count_columns[0].get('count(*)'))
+        count_rows_query = f"SELECT count(*) from `{table_name}` WHERE {Column} LIKE '%{Value}%'"
+        with connection.cursor() as cursor:
+            cursor.execute(count_rows_query)
+            count_rows = cursor.fetchall()
+        object.tableWidget.setRowCount(count_rows[0].get('count(*)'))
+        object.tableWidget.setHorizontalHeaderLabels(horizontalHeaderLabels)
+        with connection.cursor() as cursor:
+            select_all_query = f"SELECT * FROM `{table_name}` WHERE {Column} LIKE '%{Value}%'"
+            cursor.execute(select_all_query)
+            rows = cursor.fetchall()
+            table_row = 0
+            for row in rows:
+                for i in range(count_columns[0].get('count(*)')):
+                    object.tableWidget.setItem(table_row, i,
+                                               QtWidgets.QTableWidgetItem(str(row.get(horizontalHeaderLabels[i]))))
+                table_row += 1
+
+    if form.radioButton.isChecked():
         FindAircraftDialog = QtWidgets.QDialog()
         FindAircraftUi = Ui_FindAircraftDialog()
         FindAircraftUi.setupUi(FindAircraftDialog)
         table_name = "aircraft"
         horizontalHeaderLabels = ["FlightID", "ArrivalCity", "departureCity", "AircraftModelname"]
+        object = FindAircraftUi
         loaddata_for_find(table_name, horizontalHeaderLabels, FindAircraftUi)
         FindAircraftUi.pushButton.clicked.connect(find_filter)
         FindAircraftDialog.show()
         FindAircraftDialog.exec_()
 
     if form.radioButton_2.isChecked():
-        pass
+        FindDepartmentDialog = QtWidgets.QDialog()
+        FindDepartmentUi = Ui_FindDepartmentDialog()
+        FindDepartmentUi.setupUi(FindDepartmentDialog)
+        table_name = "department"
+        horizontalHeaderLabels = ["DepartmentID", "DepartmentName", "DepartmentDescription"]
+        loaddata_for_find(table_name, horizontalHeaderLabels, FindDepartmentUi)
+        object = FindDepartmentUi
+        FindDepartmentUi.pushButton.clicked.connect(find_filter)
+        FindDepartmentDialog.show()
+        FindDepartmentDialog.exec_()
     if form.radioButton_3.isChecked():
-        pass
+        FindEmergencyDialog = QtWidgets.QDialog()
+        FindEmergencyDialogUi = Ui_FindEmergencyDialog()
+        FindEmergencyDialogUi.setupUi(FindEmergencyDialog)
+        table_name = "emergencystatus"
+        horizontalHeaderLabels = ["EmergencyStatusID", "EmergencyStatusName", "EmergencyStatusDescription"]
+        loaddata_for_find(table_name, horizontalHeaderLabels, FindEmergencyDialogUi)
+        object = FindEmergencyDialogUi
+        FindEmergencyDialogUi.pushButton.clicked.connect(find_filter)
+        FindEmergencyDialog.show()
+        FindEmergencyDialog.exec_()
     if form.radioButton_4.isChecked():
-        pass
+        FindEmployeeDialog = QtWidgets.QDialog()
+        FindEmployeeDialogUi = Ui_FindEmployeeDialog()
+        FindEmployeeDialogUi.setupUi(FindEmployeeDialog)
+        table_name = "employee"
+        horizontalHeaderLabels = ["PersonnelID", "FIO", "JobTitle", "DepartmentID"]
+        loaddata_for_find(table_name, horizontalHeaderLabels, FindEmployeeDialogUi)
+        object = FindEmployeeDialogUi
+        FindEmployeeDialogUi.pushButton.clicked.connect(find_filter)
+        FindEmployeeDialog.show()
+        FindEmployeeDialog.exec_()
     if form.radioButton_5.isChecked():
-        pass
+        FindStatus = QtWidgets.QDialog()
+        FindStatusUi = Ui_FindStatusDialog()
+        FindStatusUi.setupUi(FindStatus)
+        table_name = "request_status"
+        horizontalHeaderLabels = ["StatusID", "StatusName", "Description"]
+        loaddata_for_find(table_name, horizontalHeaderLabels, FindStatusUi)
+        object = FindStatusUi
+        FindStatusUi.pushButton.clicked.connect(find_filter)
+        FindStatus.show()
+        FindStatus.exec_()
     if form.requsetforemergLiqBut.isChecked():
-        pass
+        FindInRequestEmergDialog = QtWidgets.QDialog()
+        FindInRequestEmergDialogUi = Ui_FindInRequestEmergDialog()
+        FindInRequestEmergDialogUi.setupUi(FindInRequestEmergDialog)
+        table_name = "requsetforemergencysliquidation"
+        horizontalHeaderLabels = ["FlightID", "PersonnelID", "RequestID", "WaitingTime", "EmergencyStatusID"]
+        loaddata_for_find(table_name, horizontalHeaderLabels, FindInRequestEmergDialogUi)
+        object = FindInRequestEmergDialogUi
+        FindInRequestEmergDialogUi.pushButton.clicked.connect(find_filter)
+        FindInRequestEmergDialog.show()
+        FindInRequestEmergDialog.exec_()
     if form.radioButton_6.isChecked():
-        pass
+        FindTakeoffDialog = QtWidgets.QDialog()
+        FindTakeoffDialogUi = Ui_FindTakeoffDialog()
+        FindTakeoffDialogUi.setupUi(FindTakeoffDialog)
+        table_name = "takeoff_landing_request"
+        horizontalHeaderLabels = ["RequestID", "FlightID", "PersonnelID", "WaitingTime", "StatusID"]
+        loaddata_for_find(table_name, horizontalHeaderLabels, FindTakeoffDialogUi)
+        object = FindTakeoffDialogUi
+        FindTakeoffDialogUi.pushButton.clicked.connect(find_filter)
+        FindTakeoffDialog.show()
+        FindTakeoffDialog.exec_()
 
 
 app = QApplication([])
