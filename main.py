@@ -12,6 +12,7 @@ from DialogAircraftInsert import Ui_DialogAircraftInsert
 import DialogDepartment
 from DialogEmergencyStatusInsert import Ui_DialogEmergencyStatusInsert
 from EmployeeInsert import Ui_DialogEmployeeInsert
+from FindInAirctaft import Ui_FindAircraftDialog
 from TakeoffInsertDialog import Ui_TakeoffDialog
 from UpdateDialog import Ui_Dialog
 from request_statusInsert import Ui_DialogRequestStatusInsert
@@ -78,6 +79,7 @@ Form, Window = uic.loadUiType("Table.ui")
 
 table_name = ""
 horizontalHeaderLabels = []
+object
 def loaddata(table_name, horizontalHeaderLabels):
     count_columns_query = f"select count(*) from information_schema.columns where table_name = '{table_name}' and table_schema = 'airportd'"
     with connection.cursor() as cursor:
@@ -100,6 +102,8 @@ def loaddata(table_name, horizontalHeaderLabels):
                 form.tableWidget.setItem(table_row, i, QtWidgets.QTableWidgetItem(str(row.get(horizontalHeaderLabels[i]))))
             table_row+=1
         print("This is the end of select_all")
+
+
 
 
 def on_click():
@@ -263,7 +267,20 @@ def on_add_row():
 
 def on_update():
     def update_cell():
-        table = ui.Table.toPlainText()
+        if form.radioButton.isChecked():
+            table = "aircraft"
+        if form.radioButton_2.isChecked():
+            table = "department"
+        if form.radioButton_3.isChecked():
+            table = "emergencystatus"
+        if form.radioButton_4.isChecked():
+            table = "employee"
+        if form.radioButton_5.isChecked():
+            table = "request_status"
+        if form.requsetforemergLiqBut.isChecked():
+            table = "requsetforemergencysliquidation"
+        if form.radioButton_6.isChecked():
+            table = "takeoff_landing_request"
         column = ui.Column.toPlainText()
         newValue = ui.newValue.toPlainText()
         primaryKey = ui.PrimaryKey.toPlainText()
@@ -320,6 +337,57 @@ def on_delete():
     DeleteDialog.show()
     DeleteDialog.exec_()
 
+def on_find():
+    global table_name
+    global horizontalHeaderLabels
+    def loaddata_for_find(table_name, horizontalHeaderLabels, object):
+        count_columns_query = f"select count(*) from information_schema.columns where table_name = '{table_name}' and table_schema = 'airportd'"
+        with connection.cursor() as cursor:
+            cursor.execute(count_columns_query)
+            count_columns = cursor.fetchall()
+        object.tableWidget.setColumnCount(count_columns[0].get('count(*)'))
+        count_rows_query = f"SELECT count(*) from `{table_name}`"
+        with connection.cursor() as cursor:
+            cursor.execute(count_rows_query)
+            count_rows = cursor.fetchall()
+        object.tableWidget.setRowCount(count_rows[0].get('count(*)'))
+        object.tableWidget.setHorizontalHeaderLabels(horizontalHeaderLabels)
+        with connection.cursor() as cursor:
+            select_all_query = f"SELECT * FROM `{table_name}`"
+            cursor.execute(select_all_query)
+            rows = cursor.fetchall()
+            table_row = 0
+            for row in rows:
+                for i in range(count_columns[0].get('count(*)')):
+                    object.tableWidget.setItem(table_row, i, QtWidgets.QTableWidgetItem(str(row.get(horizontalHeaderLabels[i]))))
+                table_row += 1
+        print("This is the end of select_all")
+    def find_filter():
+        print("Test")
+    if form.radioButton.isChecked:
+        FindAircraftDialog = QtWidgets.QDialog()
+        FindAircraftUi = Ui_FindAircraftDialog()
+        FindAircraftUi.setupUi(FindAircraftDialog)
+        table_name = "aircraft"
+        horizontalHeaderLabels = ["FlightID", "ArrivalCity", "departureCity", "AircraftModelname"]
+        loaddata_for_find(table_name, horizontalHeaderLabels, FindAircraftUi)
+        FindAircraftUi.pushButton.clicked.connect(find_filter)
+        FindAircraftDialog.show()
+        FindAircraftDialog.exec_()
+
+    if form.radioButton_2.isChecked():
+        pass
+    if form.radioButton_3.isChecked():
+        pass
+    if form.radioButton_4.isChecked():
+        pass
+    if form.radioButton_5.isChecked():
+        pass
+    if form.requsetforemergLiqBut.isChecked():
+        pass
+    if form.radioButton_6.isChecked():
+        pass
+
 
 app = QApplication([])
 window = Window()
@@ -329,6 +397,7 @@ form.pushButton.clicked.connect(on_click)
 form.pushButton_2.clicked.connect(on_add_row)
 form.pushButton_3.clicked.connect(on_update)
 form.pushButton_4.clicked.connect(on_delete)
+form.FindButton.clicked.connect(on_find)
 window.show()
 app.exec_()
 connection.close()

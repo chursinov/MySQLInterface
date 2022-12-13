@@ -203,6 +203,19 @@
      <string>takeoff_landing_request</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="FindButton">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>500</y>
+      <width>141</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Find in current table</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

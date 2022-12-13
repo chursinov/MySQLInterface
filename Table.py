@@ -67,6 +67,9 @@ class Ui_MainWindow(object):
         self.radioButton_6 = QtWidgets.QRadioButton(self.centralwidget)
         self.radioButton_6.setGeometry(QtCore.QRect(20, 160, 151, 17))
         self.radioButton_6.setObjectName("radioButton_6")
+        self.FindButton = QtWidgets.QPushButton(self.centralwidget)
+        self.FindButton.setGeometry(QtCore.QRect(550, 500, 141, 28))
+        self.FindButton.setObjectName("FindButton")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 26))
@@ -94,6 +97,7 @@ class Ui_MainWindow(object):
         self.pushButton_4.setText(_translate("MainWindow", "Delete row"))
         self.requsetforemergLiqBut.setText(_translate("MainWindow", "requsetforemergencysliquidation"))
         self.radioButton_6.setText(_translate("MainWindow", "takeoff_landing_request"))
+        self.FindButton.setText(_translate("MainWindow", "Find in current table"))
 
 
 if __name__ == "__main__":
