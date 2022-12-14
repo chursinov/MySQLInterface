@@ -301,10 +301,13 @@ def on_update():
             connection.commit()
         loaddata(table_name, horizontalHeaderLabels)
         with connection.cursor() as cursor:
-            trigger_pop = "SELECT NotifyText From `notifications` WHERE NotifyID='1'"
-            cursor.execute(trigger_pop)
-            buf = cursor.fetchall()
-            if buf != "":
+            check_query = "SELECT count(*) from `notifications`"
+            cursor.execute(check_query)
+            check = cursor.fetchall()
+            if check[0].get('count(*)') != 0:
+                trigger_pop = "SELECT NotifyText From `notifications`"
+                cursor.execute(trigger_pop)
+                buf = cursor.fetchall()
                 TriggerDialog = QtWidgets.QDialog()
                 Triggerui = Ui_TriggerDialog()
                 Triggerui.setupUi(TriggerDialog)
@@ -312,9 +315,9 @@ def on_update():
                 Triggerui.label.setText(buf[0].get('NotifyText'))
                 TriggerDialog.show()
                 TriggerDialog.exec_()
-            clear_table_query = "TRUNCATE `notifications`"
-            cursor.execute(clear_table_query)
-            connection.commit()
+                clear_table_query = "TRUNCATE `notifications`"
+                cursor.execute(clear_table_query)
+                connection.commit()
     UpdateDialog = QtWidgets.QDialog()
     ui = Ui_Dialog()
     ui.setupUi(UpdateDialog)
